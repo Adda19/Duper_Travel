@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/core/theme c:/Users/adda_/Dupper/lib/core/constants c:/Users/adda_/Dupper/lib/core/utils)",
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/features/trips/models c:/Users/adda_/Dupper/lib/features/trips/screens c:/Users/adda_/Dupper/lib/features/trips/widgets)",
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/features/map/screens c:/Users/adda_/Dupper/lib/features/map/widgets)",
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/features/places/models c:/Users/adda_/Dupper/lib/features/places/screens c:/Users/adda_/Dupper/lib/features/places/widgets)",
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/features/itinerary/screens c:/Users/adda_/Dupper/lib/features/itinerary/widgets)",
+      "Bash(mkdir -p c:/Users/adda_/Dupper/lib/features/costs/screens c:/Users/adda_/Dupper/lib/features/costs/widgets)",
+      "Bash(flutter pub:*)"
+    ]
+  }
+}
