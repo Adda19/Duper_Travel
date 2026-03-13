@@ -31,6 +31,8 @@ class _AddTripScreenState extends State<AddTripScreen> {
   late DateTime _fechaFin;
   late int _personas;
   late String _moneda;
+  late String _tipoTransporte;
+  TimeOfDay? _horaSalida;
 
   bool _saving = false;
 
@@ -54,6 +56,9 @@ class _AddTripScreenState extends State<AddTripScreen> {
     _moneda = (t?.moneda != null && _currencies.contains(t!.moneda))
         ? t.moneda
         : 'USD';
+    _tipoTransporte = t?.tipoTransporte ?? 'vuelo';
+    final h = t?.horaSalida;
+    _horaSalida = h != null ? TimeOfDay(hour: h.hour, minute: h.minute) : null;
   }
 
   @override
@@ -278,6 +283,24 @@ class _AddTripScreenState extends State<AddTripScreen> {
             ),
             const SizedBox(height: 28),
 
+            const _SectionLabel('Transporte'),
+            const SizedBox(height: 12),
+
+            // Tipo de transporte
+            _TransportSelector(
+              selected: _tipoTransporte,
+              onChanged: (t) => setState(() => _tipoTransporte = t),
+            ),
+            const SizedBox(height: 16),
+
+            // Hora de salida
+            _TimePickerField(
+              time: _horaSalida,
+              onPicked: (t) => setState(() => _horaSalida = t),
+              onCleared: () => setState(() => _horaSalida = null),
+            ),
+            const SizedBox(height: 28),
+
             const _SectionLabel('Detalles'),
             const SizedBox(height: 16),
 
@@ -386,6 +409,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
       trip.numeroPersonas = _personas;
       trip.moneda = _moneda;
       trip.presupuestoTotal = presupuesto;
+      trip.tipoTransporte = _tipoTransporte;
+      trip.horaSalida = _horaSalida != null
+          ? DateTime(2000, 1, 1, _horaSalida!.hour, _horaSalida!.minute)
+          : null;
       await trip.save();
 
       final active = TripProvider.instance.activeTrip.value;
@@ -402,6 +429,10 @@ class _AddTripScreenState extends State<AddTripScreen> {
         numeroPersonas: _personas,
         moneda: _moneda,
         presupuestoTotal: presupuesto,
+        tipoTransporte: _tipoTransporte,
+        horaSalida: _horaSalida != null
+            ? DateTime(2000, 1, 1, _horaSalida!.hour, _horaSalida!.minute)
+            : null,
       );
       await box.put(trip.id, trip);
       if (box.length == 1) {
@@ -478,6 +509,98 @@ class _DateField extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             color: colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TransportSelector extends StatelessWidget {
+  final String selected;
+  final ValueChanged<String> onChanged;
+  const _TransportSelector({required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: TransportType.all.map((type) {
+        final isSelected = type == selected;
+        return GestureDetector(
+          onTap: () => onChanged(type),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected ? cs.primary : cs.surfaceVariant,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(TransportType.emoji(type),
+                    style: const TextStyle(fontSize: 16)),
+                const SizedBox(width: 6),
+                Text(
+                  TransportType.label(type),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? cs.onPrimary : cs.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _TimePickerField extends StatelessWidget {
+  final TimeOfDay? time;
+  final ValueChanged<TimeOfDay> onPicked;
+  final VoidCallback onCleared;
+  const _TimePickerField(
+      {required this.time, required this.onPicked, required this.onCleared});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final label = time != null
+        ? '${time!.hour.toString().padLeft(2, '0')}:${time!.minute.toString().padLeft(2, '0')}'
+        : 'Sin hora definida';
+
+    return InkWell(
+      onTap: () async {
+        final picked = await showTimePicker(
+          context: context,
+          initialTime: time ?? TimeOfDay.now(),
+          helpText: '¿A qué hora sales?',
+        );
+        if (picked != null) onPicked(picked);
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: '¿A qué hora sales? (opcional)',
+          prefixIcon: const Icon(Icons.schedule_outlined),
+          suffixIcon: time != null
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 18),
+                  onPressed: onCleared,
+                )
+              : const Icon(Icons.access_time_outlined),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 15,
+            color: time != null ? cs.onSurface : cs.onSurfaceVariant,
           ),
         ),
       ),

@@ -269,7 +269,7 @@ class _WishlistDetailScreenState extends State<WishlistDetailScreen> {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Eliminar lugar'),
-        content: Text('¿Eliminar "${_place.nombre}" de tu wishlist?'),
+        content: Text('¿Eliminar "${_place.nombre}" de tus guardados?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

@@ -131,7 +131,7 @@ class MapFilterBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Ver Wishlist',
+                      'Ver Guardados',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,

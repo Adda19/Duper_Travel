@@ -97,7 +97,7 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
             icon: Icon(Icons.favorite_border),
             selectedIcon: Icon(Icons.favorite),
-            label: 'Wishlist',
+            label: 'Guardados',
           ),
         ],
       ),

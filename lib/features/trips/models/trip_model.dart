@@ -29,6 +29,12 @@ class TripModel extends HiveObject {
   @HiveField(7)
   late double presupuestoTotal;
 
+  @HiveField(8)
+  String tipoTransporte;
+
+  @HiveField(9)
+  DateTime? horaSalida;
+
   TripModel({
     required this.id,
     required this.nombre,
@@ -38,6 +44,8 @@ class TripModel extends HiveObject {
     required this.numeroPersonas,
     required this.moneda,
     required this.presupuestoTotal,
+    this.tipoTransporte = 'vuelo',
+    this.horaSalida,
   });
 
   /// Single-string display e.g. "Paris · Roma · Barcelona".

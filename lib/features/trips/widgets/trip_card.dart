@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../models/trip_model.dart';
+import 'trip_countdown_banner.dart';
 
 class TripCard extends StatelessWidget {
   final TripModel trip;
@@ -78,7 +79,9 @@ class TripCard extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
+              TripCountdownBanner(trip: trip),
+              const SizedBox(height: 10),
               const Divider(height: 1),
               const SizedBox(height: 12),
 

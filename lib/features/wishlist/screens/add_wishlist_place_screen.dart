@@ -343,7 +343,7 @@ class _AddWishlistPlaceScreenState extends State<AddWishlistPlaceScreen> {
                             strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.favorite),
-                label: Text(isEdit ? 'Guardar cambios' : 'Guardar en wishlist'),
+                label: Text(isEdit ? 'Guardar cambios' : 'Guardar en guardados'),
               ),
             ),
             const SizedBox(height: 20),

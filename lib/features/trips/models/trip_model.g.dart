@@ -33,13 +33,15 @@ class TripModelAdapter extends TypeAdapter<TripModel> {
       numeroPersonas: fields[5] as int,
       moneda: fields[6] as String,
       presupuestoTotal: fields[7] as double,
+      tipoTransporte: (fields[8] as String?) ?? 'vuelo',
+      horaSalida: fields[9] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, TripModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -55,7 +57,11 @@ class TripModelAdapter extends TypeAdapter<TripModel> {
       ..writeByte(6)
       ..write(obj.moneda)
       ..writeByte(7)
-      ..write(obj.presupuestoTotal);
+      ..write(obj.presupuestoTotal)
+      ..writeByte(8)
+      ..write(obj.tipoTransporte)
+      ..writeByte(9)
+      ..write(obj.horaSalida);
   }
 
   @override

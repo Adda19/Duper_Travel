@@ -168,6 +168,45 @@ class WishlistSource {
       };
 }
 
+// ── Transport types ────────────────────────────────────────────────────────────
+class TransportType {
+  static const String vuelo = 'vuelo';
+  static const String carro = 'carro';
+  static const String bus = 'bus';
+  static const String tren = 'tren';
+  static const String barco = 'barco';
+  static const String otro = 'otro';
+
+  static const List<String> all = [vuelo, carro, bus, tren, barco, otro];
+
+  static String label(String type) => switch (type) {
+        vuelo => 'Vuelo',
+        carro => 'Carro',
+        bus => 'Bus',
+        tren => 'Tren',
+        barco => 'Barco',
+        _ => 'Otro',
+      };
+
+  static String emoji(String type) => switch (type) {
+        vuelo => '✈️',
+        carro => '🚗',
+        bus => '🚌',
+        tren => '🚂',
+        barco => '🚢',
+        _ => '🧳',
+      };
+
+  static String countdownText(String type) => switch (type) {
+        vuelo => '¡Tu vuelo sale en',
+        carro => '¡Arrancas en',
+        bus => '¡Tu bus sale en',
+        tren => '¡Tu tren sale en',
+        barco => '¡Zarpas en',
+        _ => '¡Tu aventura comienza en',
+      };
+}
+
 // ── Hive box names ─────────────────────────────────────────────────────────────
 class HiveBoxes {
   static const String trips = 'trips';
