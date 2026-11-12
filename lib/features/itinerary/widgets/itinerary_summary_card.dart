@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/utils/trip_provider.dart';
 import '../../places/providers/place_provider.dart';
 import '../../../core/constants/app_constants.dart';
+import '../utils/trip_progress.dart';
 
 /// Fixed card at the top of the itinerary screen.
 /// Shows total/per-person cost, total hours, and visited-place progress.
@@ -28,7 +29,7 @@ class _ItinerarySummaryCardState extends State<ItinerarySummaryCard> {
     final visited =
         places.where((p) => p.estado == PlaceStatus.visited).length;
     final total = places.length;
-    final progress = total == 0 ? 0.0 : visited / total;
+    final progress = progresoVisitados(places);
 
     final displayCost =
         _showPerPerson && trip.numeroPersonas > 0
@@ -154,7 +155,7 @@ class _ItinerarySummaryCardState extends State<ItinerarySummaryCard> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${(progress * 100).toStringAsFixed(0)}%',
+                  '$visited de $total lugares visitados (${(progress * 100).round()}%)',
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
