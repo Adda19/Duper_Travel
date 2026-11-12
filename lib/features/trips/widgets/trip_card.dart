@@ -120,6 +120,17 @@ class TripCard extends StatelessWidget {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 6),
+
+              Text(
+                '${trip.moneda} ${NumberFormat.compact().format(trip.presupuestoPorDia)} por día · '
+                '${trip.moneda} ${NumberFormat.compact().format(trip.presupuestoPorPersona)} por persona',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),

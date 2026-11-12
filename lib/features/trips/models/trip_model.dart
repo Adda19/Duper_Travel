@@ -83,10 +83,19 @@ class TripModel extends HiveObject {
   /// Single-string display e.g. "Paris · Roma · Barcelona".
   String get destino => destinos.join(' · ');
 
-  int get duracionDias => fechaFin.difference(fechaInicio).inDays + 1;
+  int get duracionDias {
+    final inicio = DateTime.utc(fechaInicio.year, fechaInicio.month, fechaInicio.day);
+    final fin = DateTime.utc(fechaFin.year, fechaFin.month, fechaFin.day);
+    return fin.difference(inicio).inDays + 1;
+  }
+
+  double get presupuestoPorDia {
+    final dias = duracionDias;
+    return dias > 0 ? presupuestoTotal / dias : 0;
+  }
 
   double get presupuestoPorPersona =>
-      numeroPersonas > 0 ? presupuestoTotal / numeroPersonas : presupuestoTotal;
+      numeroPersonas > 0 ? presupuestoTotal / numeroPersonas : 0;
 
   @override
   String toString() =>
