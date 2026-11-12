@@ -13,6 +13,7 @@ class ItineraryDayHeader extends StatelessWidget {
   final List<PlaceModel> places;
   final String currency;
   final bool isExpanded;
+  final VoidCallback? onOptimize;
 
   const ItineraryDayHeader({
     super.key,
@@ -21,6 +22,7 @@ class ItineraryDayHeader extends StatelessWidget {
     required this.places,
     required this.currency,
     required this.isExpanded,
+    this.onOptimize,
   });
 
   @override
@@ -118,7 +120,15 @@ class ItineraryDayHeader extends StatelessWidget {
                   color: cs.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(width: 4),
+              if (places.length >= 3 && onOptimize != null)
+                IconButton(
+                  tooltip: 'Optimizar ruta',
+                  icon: const Icon(Icons.route_outlined, size: 20),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onOptimize,
+                )
+              else
+                const SizedBox(width: 4),
 
               // ── Expand icon ────────────────────────────────────────────
               AnimatedRotation(

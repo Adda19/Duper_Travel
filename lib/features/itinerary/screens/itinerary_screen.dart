@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import '../../places/screens/add_place_screen.dart';
 import '../../places/screens/place_detail_screen.dart';
 import '../../trips/models/trip_model.dart';
 import '../utils/itinerary_pdf_generator.dart';
+import '../utils/route_optimizer.dart';
 import '../widgets/itinerary_day_header.dart';
 import '../widgets/itinerary_place_tile.dart';
 import '../widgets/itinerary_summary_card.dart';
@@ -206,6 +208,20 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                             _saveOrder(trip.id, day, updated);
                           });
                         },
+                        onOptimize: () {
+                          final optimized = optimizarRuta(places);
+                          final before = distanciaTotalKm(places);
+                          final after = distanciaTotalKm(optimized);
+                          final saved = max(0.0, before - after);
+                          setState(() => _saveOrder(trip.id, day, optimized));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Ruta optimizada: ${after.toStringAsFixed(1)} km (ahorras ${saved.toStringAsFixed(1)} km)'),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
                         onDelete: _confirmDelete,
                         onCycleStatus: _cycleStatus,
                         onTap: (p) => Navigator.push(
@@ -239,6 +255,7 @@ class _DaySection extends StatelessWidget {
   final String currency;
   final bool isExpanded;
   final VoidCallback onToggle;
+  final VoidCallback onOptimize;
   final void Function(int, int) onReorder;
   final Future<void> Function(PlaceModel) onDelete;
   final Future<void> Function(PlaceModel) onCycleStatus;
@@ -251,6 +268,7 @@ class _DaySection extends StatelessWidget {
     required this.currency,
     required this.isExpanded,
     required this.onToggle,
+    required this.onOptimize,
     required this.onReorder,
     required this.onDelete,
     required this.onCycleStatus,
@@ -276,6 +294,7 @@ class _DaySection extends StatelessWidget {
               places: places,
               currency: currency,
               isExpanded: isExpanded,
+              onOptimize: onOptimize,
             ),
           ),
           AnimatedCrossFade(
