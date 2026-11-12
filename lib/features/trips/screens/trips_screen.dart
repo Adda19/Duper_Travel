@@ -2,56 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/backup_service.dart';
 import '../../../core/utils/trip_provider.dart';
 import '../models/trip_model.dart';
 import '../widgets/trip_card.dart';
 import 'add_trip_screen.dart';
 
-class TripsScreen extends StatelessWidget {
+class TripsScreen extends StatefulWidget {
   const TripsScreen({super.key});
+
+  @override
+  State<TripsScreen> createState() => _TripsScreenState();
+}
+
+class _TripsScreenState extends State<TripsScreen> {
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis Viajes')),
-      body: ValueListenableBuilder<Box<TripModel>>(
-        valueListenable:
-            Hive.box<TripModel>(HiveBoxes.trips).listenable(),
-        builder: (context, box, _) {
-          final trips = TripProvider.instance.getAllTrips();
-
-          if (trips.isEmpty) {
-            return const _EmptyState();
-          }
-
-          return ValueListenableBuilder<TripModel?>(
-            valueListenable: TripProvider.instance.activeTrip,
-            builder: (context, activeTrip, _) {
-              return ListView.builder(
-                padding: const EdgeInsets.only(top: 8, bottom: 96),
-                itemCount: trips.length,
-                itemBuilder: (context, index) {
-                  final trip = trips[index];
-                  return Dismissible(
-                    key: ValueKey(trip.id),
-                    direction: DismissDirection.endToStart,
-                    background: _DeleteBackground(),
-                    confirmDismiss: (_) => _confirmDelete(context, trip),
-                    onDismissed: (_) async {
-                      await TripProvider.instance.deleteTrip(trip);
-                    },
-                    child: TripCard(
-                      trip: trip,
-                      isActive: activeTrip?.id == trip.id,
-                      onTap: () => _onTripTap(context, trip, activeTrip),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
+      appBar: AppBar(
+        title: const Text('Mis Viajes'),
+        actions: [_buildMenu()],
       ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : ValueListenableBuilder<Box<TripModel>>(
+              valueListenable:
+                  Hive.box<TripModel>(HiveBoxes.trips).listenable(),
+              builder: (context, box, _) {
+                final trips = TripProvider.instance.getAllTrips();
+
+                if (trips.isEmpty) {
+                  return const _EmptyState();
+                }
+
+                return ValueListenableBuilder<TripModel?>(
+                  valueListenable: TripProvider.instance.activeTrip,
+                  builder: (context, activeTrip, _) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 8, bottom: 96),
+                      itemCount: trips.length,
+                      itemBuilder: (context, index) {
+                        final trip = trips[index];
+                        return Dismissible(
+                          key: ValueKey(trip.id),
+                          direction: DismissDirection.endToStart,
+                          background: _DeleteBackground(),
+                          confirmDismiss: (_) => _confirmDelete(context, trip),
+                          onDismissed: (_) async {
+                            await TripProvider.instance.deleteTrip(trip);
+                          },
+                          child: TripCard(
+                            trip: trip,
+                            isActive: activeTrip?.id == trip.id,
+                            onTap: () => _onTripTap(context, trip, activeTrip),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'fab_trips',
         onPressed: () => _openAddTrip(context),
@@ -59,6 +72,55 @@ class TripsScreen extends StatelessWidget {
         label: const Text('Nuevo viaje'),
       ),
     );
+  }
+
+  // ── Menú ⋮ ────────────────────────────────────────────────────────────────
+
+  Widget _buildMenu() {
+    return ValueListenableBuilder<Box<TripModel>>(
+      valueListenable: Hive.box<TripModel>(HiveBoxes.trips).listenable(),
+      builder: (context, box, _) {
+        final hasTrips = box.isNotEmpty;
+        return PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: _onMenuSelected,
+          itemBuilder: (_) => [
+            if (hasTrips)
+              const PopupMenuItem(
+                value: 'export',
+                child: ListTile(
+                  leading: Text('📤', style: TextStyle(fontSize: 20)),
+                  title: Text('Exportar datos'),
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+            const PopupMenuItem(
+              value: 'import',
+              child: ListTile(
+                leading: Text('📥', style: TextStyle(fontSize: 20)),
+                title: Text('Importar datos'),
+                contentPadding: EdgeInsets.zero,
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _onMenuSelected(String value) async {
+    if (value == 'export') {
+      setState(() => _loading = true);
+      try {
+        await BackupService.instance.exportData();
+      } finally {
+        if (mounted) setState(() => _loading = false);
+      }
+    } else if (value == 'import') {
+      await BackupService.instance.importData(context);
+    }
   }
 
   // ── Handlers ──────────────────────────────────────────────────────────────

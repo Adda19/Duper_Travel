@@ -84,6 +84,55 @@ class WishlistPlaceModel extends HiveObject {
         links = links ?? [],
         fotos = fotos ?? [];
 
+  // ── JSON ──────────────────────────────────────────────────────────────────
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'nombre': nombre,
+        'tipo': tipo,
+        'latitud': latitud,
+        'longitud': longitud,
+        'ciudad': ciudad,
+        'pais': pais,
+        'costoEstimado': costoEstimado,
+        'tiempoEstimadoMin': tiempoEstimadoMin,
+        'horario': horario,
+        'tags': tags,
+        'comentarios': comentarios,
+        'links': links,
+        'fotos': fotos,
+        'estado': estado,
+        'fechaGuardado': fechaGuardado.toIso8601String(),
+        'fechaVisitado': fechaVisitado?.toIso8601String(),
+        'fuente': fuente,
+      };
+
+  factory WishlistPlaceModel.fromJson(Map<String, dynamic> json) =>
+      WishlistPlaceModel(
+        id: json['id'] as String,
+        nombre: json['nombre'] as String,
+        tipo: json['tipo'] as String,
+        latitud: (json['latitud'] as num?)?.toDouble() ?? 0,
+        longitud: (json['longitud'] as num?)?.toDouble() ?? 0,
+        ciudad: json['ciudad'] as String? ?? '',
+        pais: json['pais'] as String? ?? '',
+        costoEstimado: (json['costoEstimado'] as num?)?.toDouble() ?? 0,
+        tiempoEstimadoMin: json['tiempoEstimadoMin'] as int? ?? 0,
+        horario: json['horario'] as String? ?? '',
+        tags: (json['tags'] as List?)?.cast<String>() ?? [],
+        comentarios: json['comentarios'] as String? ?? '',
+        links: (json['links'] as List?)?.cast<String>() ?? [],
+        fotos: (json['fotos'] as List?)?.cast<String>() ?? [],
+        estado: json['estado'] as String? ?? 'pending',
+        fechaGuardado: DateTime.parse(json['fechaGuardado'] as String),
+        fechaVisitado: json['fechaVisitado'] != null
+            ? DateTime.parse(json['fechaVisitado'] as String)
+            : null,
+        fuente: json['fuente'] as String? ?? 'Otro',
+      );
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
   bool get isPending => estado == 'pending';
   bool get isVisited => estado == 'visited';
 

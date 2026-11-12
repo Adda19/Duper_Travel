@@ -48,6 +48,38 @@ class TripModel extends HiveObject {
     this.horaSalida,
   });
 
+  // ── JSON ──────────────────────────────────────────────────────────────────
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'nombre': nombre,
+        'destinos': destinos,
+        'fechaInicio': fechaInicio.toIso8601String(),
+        'fechaFin': fechaFin.toIso8601String(),
+        'numeroPersonas': numeroPersonas,
+        'moneda': moneda,
+        'presupuestoTotal': presupuestoTotal,
+        'tipoTransporte': tipoTransporte,
+        'horaSalida': horaSalida?.toIso8601String(),
+      };
+
+  factory TripModel.fromJson(Map<String, dynamic> json) => TripModel(
+        id: json['id'] as String,
+        nombre: json['nombre'] as String,
+        destinos: (json['destinos'] as List).cast<String>(),
+        fechaInicio: DateTime.parse(json['fechaInicio'] as String),
+        fechaFin: DateTime.parse(json['fechaFin'] as String),
+        numeroPersonas: json['numeroPersonas'] as int,
+        moneda: json['moneda'] as String,
+        presupuestoTotal: (json['presupuestoTotal'] as num).toDouble(),
+        tipoTransporte: json['tipoTransporte'] as String? ?? 'vuelo',
+        horaSalida: json['horaSalida'] != null
+            ? DateTime.parse(json['horaSalida'] as String)
+            : null,
+      );
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
   /// Single-string display e.g. "Paris · Roma · Barcelona".
   String get destino => destinos.join(' · ');
 

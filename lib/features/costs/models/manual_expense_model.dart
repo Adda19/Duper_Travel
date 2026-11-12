@@ -35,6 +35,31 @@ class ManualExpenseModel extends HiveObject {
     required this.fecha,
   });
 
+  // ── JSON ──────────────────────────────────────────────────────────────────
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'tripId': tripId,
+        'descripcion': descripcion,
+        'categoria': categoria,
+        'montoEstimado': montoEstimado,
+        'montoReal': montoReal,
+        'fecha': fecha.toIso8601String(),
+      };
+
+  factory ManualExpenseModel.fromJson(Map<String, dynamic> json) =>
+      ManualExpenseModel(
+        id: json['id'] as String,
+        tripId: json['tripId'] as String,
+        descripcion: json['descripcion'] as String,
+        categoria: json['categoria'] as String,
+        montoEstimado: (json['montoEstimado'] as num).toDouble(),
+        montoReal: (json['montoReal'] as num?)?.toDouble() ?? 0,
+        fecha: DateTime.parse(json['fecha'] as String),
+      );
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
   @override
   String toString() =>
       'ManualExpenseModel(id: $id, descripcion: $descripcion, monto: $montoEstimado)';
