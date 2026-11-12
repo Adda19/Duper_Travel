@@ -1,0 +1,2 @@
+# Scripts de la fábrica y gates: siempre LF (un gate con CRLF no corre)
+*.sh text eol=lf
