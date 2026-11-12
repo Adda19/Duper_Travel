@@ -1,0 +1,12 @@
+# Added by the workshop factory kit (patched: engine in .factory-engine/ instead of lib/).
+factory.sh
+doctor.sh
+.factory-engine
+.claude/agents/planner.md
+.claude/agents/builder.md
+.claude/agents/checker.md
+.claude/agents/reviewer.md
+dashboard
+gates/README.md
+factory.conf
+AGENTS.md
