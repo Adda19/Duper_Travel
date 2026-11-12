@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../places/models/place_model.dart';
 import '../../../core/constants/app_constants.dart';
+import '../utils/day_load.dart';
 
 /// Expandable section header for a single day in the itinerary.
 /// Shows: day number, real date (if available), total hours, total cost,
@@ -90,6 +91,16 @@ class ItineraryDayHeader extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (diaSobrecargado(places))
+                      Text(
+                        '⚠️ Día pesado: ${minutosDelDia(places) ~/ 60}h ${minutosDelDia(places) % 60}m',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: cs.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                   ],
                 ),
               ),
